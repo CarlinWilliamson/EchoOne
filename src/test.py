@@ -8,11 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 
-#options = webdriver.FirefoxOptions()
-#options.add_argument('-headless')
+options = webdriver.FirefoxOptions()
+options.add_argument('-headless')
 
-#driver = webdriver.Firefox(firefox_options = options)
-driver = webdriver.Firefox()
+driver = webdriver.Firefox(firefox_options = options)
+#driver = webdriver.Firefox()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
 elem = driver.find_element_by_name("email")
@@ -63,8 +63,16 @@ matchDict = {};
 for match in matches:
 	matchDict[match.group(2)] = match.group(1);
 
-matchid = 0
-elm = driver.find_element_by_id(matches[matchid].group(1))
+print("Your Courses:")
+counter = 0
+keys = list(matchDict.keys());
+for key in keys:
+	 print(key + ": " + str(counter));
+	 counter += 1
+inputNum = int(input("\nSelect a Courses Corrisponding Number:"))
+
+matchid = inputNum
+elm = driver.find_element_by_id(matchDict[keys[inputNum]])
 elm.click()
 
 sleep(6)
@@ -75,12 +83,6 @@ elms = driver.find_elements_by_class_name("menu centered")
 	#print(elm.get_attribute("aria-controls"))
 elms[0].click()
 
-print("Your Courses:")
-counter = 0
-for key in matchDict.keys():
-	 print(key + ": " + str(counter));
-	 counter += 1
-inputNum = input("\nSelect a Courses Corrisponding Number:")
 
 #assert "No results found." not in driver.page_source
 #driver.close()
