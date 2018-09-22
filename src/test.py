@@ -42,7 +42,6 @@ try:
 except TimeoutException:
 	print("Loading took too much time!")
 
-
 page_source = driver.page_source
 page = page_source.split('\n')
 
@@ -60,6 +59,9 @@ for match in matches:
 	print ("matchObj.group(2) : " + match.group(2)) #Course Code
 
 
+matchDict = {};
+for match in matches:
+	matchDict[match.group(2)] = match.group(1);
 
 matchid = 0
 elm = driver.find_element_by_id(matches[matchid].group(1))
@@ -67,12 +69,20 @@ elm.click()
 
 sleep(6)
 
+
 elms = driver.find_elements_by_class_name("menu centered")
 #for elm in elms:
 	#print(elm.get_attribute("aria-controls"))
 elms[0].click()
 
+print("Your Courses:")
+counter = 0
+for key in matchDict.keys():
+	 print(key + ": " counter);
+	 counter += 1
+inputNum = input("\nSelect a Courses Corrisponding Number:")
+
 #assert "No results found." not in driver.page_source
 #driver.close()
 
-
+# vim: set softtabstop=8
