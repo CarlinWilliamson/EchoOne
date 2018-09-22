@@ -67,22 +67,43 @@ matchid = 0
 elm = driver.find_element_by_id(matches[matchid].group(1))
 elm.click()
 
-sleep(6)
+delay = 6
+try:
+	myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
+	print("Page is ready!")
+except TimeoutException:
+	print("Loading took too much time!")
 
+elms = driver.find_elements_by_class_name("menu-opener")
+print(len(elms))
+for elm in elms:
+	print(elm.get_attribute("aria-controls"))
 
-elms = driver.find_elements_by_class_name("menu centered")
-#for elm in elms:
-	#print(elm.get_attribute("aria-controls"))
-elms[0].click()
 
 print("Your Courses:")
 counter = 0
 for key in matchDict.keys():
-	 print(key + ": " counter);
+	 print(key + ": " + str(counter));
 	 counter += 1
 inputNum = input("\nSelect a Courses Corrisponding Number:")
+
+elms = driver.find_elements_by_class_name("courseMediaIndicator")
+print(len(elms))
+elms[0].click()
+
+time.sleep(1)
+
+elm = driver.find_element_by_xpath("")
+elm.click()
+#assert "No results found." not in driver.page_source
+#driver.close()
+
+#/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a
+#/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/ul/li[2]/a
+#/html/body/div[2]/div[3]/div/div/div/div[2]/div[3]/div/div/div/div/div/div[2]/ul/li[2]/a
 
 #assert "No results found." not in driver.page_source
 #driver.close()
 
 # vim: set softtabstop=8
+
