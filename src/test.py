@@ -42,7 +42,6 @@ try:
 except TimeoutException:
 	print("Loading took too much time!")
 
-
 page_source = driver.page_source
 page = page_source.split('\n')
 
@@ -60,6 +59,9 @@ for match in matches:
 	print ("matchObj.group(2) : " + match.group(2)) #Course Code
 
 
+matchDict = {};
+for match in matches:
+	matchDict[match.group(2)] = match.group(1);
 
 matchid = 0
 elm = driver.find_element_by_id(matches[matchid].group(1))
@@ -78,18 +80,32 @@ for elm in elms:
 	print(elm.get_attribute("aria-controls"))
 
 
+print("Your Courses:")
+counter = 0
+for key in matchDict.keys():
+	 print(key + ": " + str(counter));
+	 counter += 1
+inputNum = input("\nSelect a Courses Corrisponding Number:")
+
 elms = driver.find_elements_by_class_name("courseMediaIndicator")
 print(len(elms))
 elms[0].click()
 
 time.sleep(1)
 
-elm = driver.find_element_by_xpath("")
+elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a")
 elm.click()
+
+time.sleep(1)
 #assert "No results found." not in driver.page_source
 #driver.close()
 
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/ul/li[2]/a
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[3]/div/div/div/div/div/div[2]/ul/li[2]/a
+
+#assert "No results found." not in driver.page_source
+#driver.close()
+
+# vim: set softtabstop=8
 
