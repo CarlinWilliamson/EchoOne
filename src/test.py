@@ -19,7 +19,7 @@ elem.clear()
 elem.send_keys("carlin.williamson@student.unsw.edu.au")
 elem.send_keys(Keys.RETURN)
 
-delay = 5
+delay = 4
 try:
     myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
     print("Page is ready!")
@@ -34,12 +34,12 @@ elem.clear()
 elem.send_keys("Hackathon2018")
 elem.send_keys(Keys.RETURN)
 
-delay = 10
+delay = 6
 try:
-    myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
-    print("Page is ready!")
+        myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
+        print("Page is ready!")
 except TimeoutException:
-    print("Loading took too much time!")
+        print("Loading took too much time!")
 
 page_source = driver.page_source
 page = page_source.split('\n')
@@ -50,14 +50,17 @@ for line in page:
 	if matchObj:
 		matches.append(matchObj)
 
+matchDict = {};
 
 for match in matches:
-	 #print ("matchObj.group(0) : " + match.group(0)) #Entire Statement
-	 #print ("matchObj.group(1) : " + match.group(1)) #id
-	 print ("matchObj.group(2) : " + match.group(2)) #Course Code
+        matchDict[match.group(2)] = match.group(1);
+
+print (matchDict)
+        
+         
 
 
 #assert "No results found." not in driver.page_source
 #driver.close()
 
-
+# vim: set softtabstop=8
