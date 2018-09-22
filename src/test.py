@@ -50,12 +50,12 @@ for line in page:
 	if matchObj:
 		matches.append(matchObj)
 
-
+print("Your Courses:")
+counter = 0
 for match in matches:
-	 #print ("matchObj.group(0) : " + match.group(0)) #Entire Statement
-	 #print ("matchObj.group(1) : " + match.group(1)) #id
-	 print ("matchObj.group(2) : " + match.group(2)) #Course Code
-
+	 print(match.group(2) + ": " counter);
+	 counter += 1
+inputNum = input("\nSelect a Courses Corrisponding Number:")
 
 #assert "No results found." not in driver.page_source
 #driver.close()
