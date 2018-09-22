@@ -55,10 +55,13 @@ matchDict = {};
 for match in matches:
         matchDict[match.group(2)] = match.group(1);
 
-print (matchDict)
-        
-         
 
+print("Your Courses:")
+counter = 0
+for key in matchDict.keys():
+	 print(key + ": " counter);
+	 counter += 1
+inputNum = input("\nSelect a Courses Corrisponding Number:")
 
 #assert "No results found." not in driver.page_source
 #driver.close()
