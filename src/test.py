@@ -83,32 +83,35 @@ for elm in elms:
 	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
 	print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
 	counter += 1
-lectureInput = int(input("\nSelect a Lectures Corresponding Number: "))
+lectureInputStart = int(input("\nSelect First Lecture To Download: "))
+lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
+for lecture in range(lectureInputStart, lectureInputEnd):
+	elms = driver.find_elements_by_class_name("courseMediaIndicator")
+	elms[lecture].click()
+	time.sleep(0.5)
 
-elms = driver.find_elements_by_class_name("courseMediaIndicator")
-elms[lectureInput].click()
-time.sleep(0.5)
+	# open download page
+	elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(lecture + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
+	elm.click()
+	time.sleep(0.5)
 
-# open download page
-elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(lectureInput + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
-elm.click()
-time.sleep(0.5)
+	# make the video hd
+	#elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
+	#elm.click()
 
-# make the video hd
-#elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
-#elm.click()
+	enable_download_in_headless_chrome(driver,"C:\\Users\\marcu\\Downloads")
+	#download the video
+	elm = driver.find_element_by_class_name("downloadBtn")
+	elm.click()
 
-enable_download_in_headless_chrome(driver,"C:\\Users\\marcu\\Downloads")
-#download the video
-elm = driver.find_element_by_class_name("downloadBtn")
-elm.click()
+	os.chdir("C:\\Users\\marcu\\Downloads")
+	#print("Downloading Lecture " + str(lecture+1))
+	while not os.path.exists("sd1.mp4"):
+		
+		time.sleep(1)
+	os.rename("sd1.mp4", keys[courseInput] + "-" + str(lecture + 1) + ".mp4")
 
-os.chdir("C:\\Users\\marcu\\Downloads")
-while not os.path.exists("sd1.mp4"):
-	time.sleep(1)
-os.rename("sd1.mp4", keys[courseInput] + "-" + str(lectureInput + 1) + ".mp4")
-
-print("download finished and renamed to " + keys[courseInput] + "-" + str(lectureInput + 1))
+	print("download finished and renamed to " + keys[courseInput] + "-" + str(lecture + 1))
 
 #assert "No results found." not in driver.page_source
 #driver.close()
