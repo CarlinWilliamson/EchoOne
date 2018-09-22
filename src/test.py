@@ -8,10 +8,10 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 
-#options = webdriver.FirefoxOptions()
-#options.add_argument('-headless')
+options = webdriver.FirefoxOptions()
+options.add_argument('-headless')
 
-#driver = webdriver.Firefox(firefox_options = options)
+driver = webdriver.Firefox(firefox_options = options)
 driver = webdriver.Firefox()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
@@ -63,11 +63,20 @@ matchDict = {};
 for match in matches:
 	matchDict[match.group(2)] = match.group(1);
 
-matchid = 0
-elm = driver.find_element_by_id(matches[matchid].group(1))
+print("Your Courses:")
+counter = 0
+keys = list(matchDict.keys());
+for key in keys:
+	 print(key + ": " + str(counter));
+	 counter += 1
+inputNum = int(input("\nSelect a Courses Corrisponding Number:"))
+
+matchid = inputNum
+print(matchDict[keys[inputNum]])
+elm = driver.find_element_by_id(matchDict[keys[inputNum]])
 elm.click()
 
-delay = 6
+delay = 1
 try:
 	myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
 	print("Page is ready!")
@@ -80,13 +89,6 @@ for elm in elms:
 	print(elm.get_attribute("aria-controls"))
 
 
-print("Your Courses:")
-counter = 0
-for key in matchDict.keys():
-	 print(key + ": " + str(counter));
-	 counter += 1
-inputNum = input("\nSelect a Courses Corrisponding Number:")
-
 elms = driver.find_elements_by_class_name("courseMediaIndicator")
 print(len(elms))
 elms[0].click()
@@ -96,13 +98,20 @@ time.sleep(1)
 elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a")
 elm.click()
 
-time.sleep(1)
-#assert "No results found." not in driver.page_source
-#driver.close()
-
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/ul/li[2]/a
 #/html/body/div[2]/div[3]/div/div/div/div[2]/div[3]/div/div/div/div/div/div[2]/ul/li[2]/a
+
+time.sleep(1)
+elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
+elm.click()
+elm = driver.find_element_by_class_name("downloadBtn")
+elm.click()
+
+
+#assert "No results found." not in driver.page_source
+#driver.close()
+
 
 #assert "No results found." not in driver.page_source
 #driver.close()
