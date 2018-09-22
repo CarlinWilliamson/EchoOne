@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 import time
 import re
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,8 +9,9 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 
-#options = webdriver.FirefoxOptions()
-#options.add_argument('-headless')
+#chrome_options = Options() 
+#chrome_options.add_argument("--headless")
+#driver = webdriver.Chrome(chrome_options=chrome_options)
 
 #driver = webdriver.Firefox(firefox_options = options)
 driver = webdriver.Chrome()
