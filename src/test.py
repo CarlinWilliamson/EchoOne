@@ -59,7 +59,7 @@ for match in matches:
 print("Your Courses:")
 counter = 0
 for key in matchDict.keys():
-	 print(key + ": " counter);
+	 print(key + ": " + str(counter));
 	 counter += 1
 inputNum = input("\nSelect a Courses Corrisponding Number:")
 
