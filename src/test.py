@@ -103,12 +103,12 @@ enable_download_in_headless_chrome(driver,"C:\\Users\\marcu\\Downloads")
 elm = driver.find_element_by_class_name("downloadBtn")
 elm.click()
 
-os.chdir("/home/carlin/Downloads/")
+os.chdir("C:\\Users\\marcu\\Downloads")
 while not os.path.exists("sd1.mp4"):
 	time.sleep(1)
-os.rename("sd1.mp4", keys[courseInput] + "-" + str(lectureInput))
+os.rename("sd1.mp4", keys[courseInput] + "-" + str(lectureInput + 1) + ".mp4")
 
-print("download finished and renamed to " + keys[courseInput] + "-" + str(lectureInput))
+print("download finished and renamed to " + keys[courseInput] + "-" + str(lectureInput + 1))
 
 #assert "No results found." not in driver.page_source
 #driver.close()
