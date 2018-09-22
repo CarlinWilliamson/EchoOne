@@ -8,11 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 
-options = webdriver.FirefoxOptions()
-options.add_argument('-headless')
+#options = webdriver.FirefoxOptions()
+#options.add_argument('-headless')
 
-driver = webdriver.Firefox(firefox_options = options)
-#driver = webdriver.Firefox()
+#driver = webdriver.Firefox(firefox_options = options)
+driver = webdriver.Chrome()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
 elem = driver.find_element_by_name("email")
@@ -69,7 +69,7 @@ keys = list(matchDict.keys());
 for key in keys:
 	 print(key + ": " + str(counter));
 	 counter += 1
-inputNum = int(input("\nSelect a Courses Corrisponding Number:"))
+inputNum = int(input("\nSelect a Courses Corresponding Number: "))
 
 matchid = inputNum
 elm = driver.find_element_by_id(matchDict[keys[inputNum]])
@@ -83,20 +83,29 @@ except TimeoutException:
 	print("Loading took too much time!")
 
 elms = driver.find_elements_by_class_name("menu-opener")
-print(len(elms))
+
+print("Your Lectures:")
+counter = 0
 for elm in elms:
-	print(elm.get_attribute("aria-controls"))
+	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
+	print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
+	counter += 1
+inputNum = int(input("\nSelect a Lectures Corresponding Number: "))
 
 
 
 elms = driver.find_elements_by_class_name("courseMediaIndicator")
-print(len(elms))
-elms[0].click()
+elms[inputNum].click()
 
 time.sleep(1)
 
-elm = driver.find_element_by_xpath("")
+elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(inputNum + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
 elm.click()
+
+
+
+
+
 #assert "No results found." not in driver.page_source
 #driver.close()
 
