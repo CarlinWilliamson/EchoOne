@@ -17,6 +17,9 @@ from selenium.common.exceptions import TimeoutException
 driver = webdriver.Chrome()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
+
+
+# login to echo360
 elem = driver.find_element_by_name("email")
 elem.clear()
 elem.send_keys("carlin.williamson@student.unsw.edu.au")
@@ -29,6 +32,8 @@ try:
 except TimeoutException:
 	print("Loading took too much time!")
 
+
+# login to microsoft
 elem = driver.find_element_by_id("userNameInput")
 elem.clear()
 elem.send_keys("z5122521@ad.unsw.edu.au")
@@ -44,9 +49,10 @@ try:
 except TimeoutException:
 	print("Loading took too much time!")
 
+
+# choose course
 page_source = driver.page_source
 page = page_source.split('\n')
-
 
 matches = []
 for line in page:
@@ -59,7 +65,6 @@ for match in matches:
 	#print ("matchObj.group(0) : " + match.group(0)) #Entire Statement
 	#print ("matchObj.group(1) : " + match.group(1)) #id
 	print ("matchObj.group(2) : " + match.group(2)) #Course Code
-
 
 matchDict = {};
 for match in matches:
@@ -74,18 +79,20 @@ for key in keys:
 inputNum = int(input("\nSelect a Courses Corresponding Number: "))
 
 matchid = inputNum
+print(matchDict[keys[inputNum]])
 elm = driver.find_element_by_id(matchDict[keys[inputNum]])
 elm.click()
 
-delay = 6
+delay = 1
 try:
 	myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'IdOfMyElement')))
 	print("Page is ready!")
 except TimeoutException:
 	print("Loading took too much time!")
 
-elms = driver.find_elements_by_class_name("menu-opener")
 
+# choose lecture video
+elms = driver.find_elements_by_class_name("menu-opener")
 print("Your Lectures:")
 counter = 0
 for elm in elms:
@@ -94,26 +101,23 @@ for elm in elms:
 	counter += 1
 inputNum = int(input("\nSelect a Lectures Corresponding Number: "))
 
-
-
 elms = driver.find_elements_by_class_name("courseMediaIndicator")
 elms[inputNum].click()
-
 time.sleep(1)
 
+# open download page
 elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(inputNum + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
 elm.click()
+time.sleep(1)
 
+# make the video hd
+elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
+elm.click()
 
+#download the video
+elm = driver.find_element_by_class_name("downloadBtn")
+elm.click()
 
-
-
-#assert "No results found." not in driver.page_source
-#driver.close()
-
-#/html/body/div[2]/div[3]/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ul/li[2]/a
-#/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/ul/li[2]/a
-#/html/body/div[2]/div[3]/div/div/div/div[2]/div[3]/div/div/div/div/div/div[2]/ul/li[2]/a
 
 #assert "No results found." not in driver.page_source
 #driver.close()
