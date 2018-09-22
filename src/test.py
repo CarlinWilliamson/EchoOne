@@ -8,13 +8,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
+def enable_download_in_headless_chrome(driver, download_dir):
+    # add missing support for chrome "send_command"  to selenium webdriver
+    driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
 
-#chrome_options = Options() 
-#chrome_options.add_argument("--headless")
-#driver = webdriver.Chrome(chrome_options=chrome_options)
+    params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+    command_result = driver.execute("send_command", params)
+
+
+chrome_options = Options() 
+chrome_options.add_argument("--headless")
+driver = webdriver.Chrome(chrome_options=chrome_options)
 
 #driver = webdriver.Firefox(firefox_options = options)
-driver = webdriver.Chrome()
+#driver = webdriver.Chrome()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
 
@@ -114,6 +121,7 @@ time.sleep(1)
 elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
 elm.click()
 
+enable_download_in_headless_chrome(driver,"C:\\Users\\marcu\\Downloads")
 #download the video
 elm = driver.find_element_by_class_name("downloadBtn")
 elm.click()
