@@ -17,16 +17,11 @@ def enable_download_in_headless_chrome(driver, download_dir):
     params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
     command_result = driver.execute("send_command", params)
 
-
 options = Options() 
 options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
-
 #driver = webdriver.Firefox(firefox_options = options)
-#driver = webdriver.Chrome()
 driver.get("http://www.echo360.org.au")
-#assert "Python" in driver.title
-
 
 # login to echo360
 elem = driver.find_element_by_name("email")
@@ -70,7 +65,7 @@ for key in keys:
 courseInput = int(input("\nSelect a Courses Corresponding Number: "))
 
 matchid = courseInput
-print(matchDict[keys[courseInput]])
+print(keys[courseInput])
 elm = driver.find_element_by_id(matchDict[keys[courseInput]])
 elm.click()
 
@@ -84,9 +79,17 @@ for elm in elms:
 	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
 	print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
 	counter += 1
+
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
-for lecture in range(lectureInputStart, lectureInputEnd):
+
+downloadHD = input("\nDownload High Definition video? (y/n): ")
+downloadFolder = keys[courseInput]
+downloadName = "sd1.mp4"
+if (downloadHD == "y"):
+	downloadName = "hd1.mp4"
+
+for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	elms = driver.find_elements_by_class_name("courseMediaIndicator")
 	elms[lecture].click()
 	time.sleep(0.5)
@@ -94,23 +97,24 @@ for lecture in range(lectureInputStart, lectureInputEnd):
 	# open download page
 	elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(lecture + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
 	elm.click()
-	time.sleep(0.5)
+	time.sleep(0.75)
 
 	# make the video hd
-	#elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
-	#elm.click()
+	if (downloadHD == "y"):
+		elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
+		elm.click()
+		time.sleep(0.5)
 
-	enable_download_in_headless_chrome(driver,"C:\\Users\\marcu\\Downloads")
 	#download the video
+	enable_download_in_headless_chrome(driver, downloadFolder)
 	elm = driver.find_element_by_class_name("downloadBtn")
 	elm.click()
 
-	os.chdir("C:\\Users\\marcu\\Downloads")
+	os.chdir(downloadFolder)
 	#print("Downloading Lecture " + str(lecture+1))
-	while not os.path.exists("sd1.mp4"):
-		
+	while not os.path.exists(downloadName):
 		time.sleep(1)
-	os.rename("sd1.mp4", keys[courseInput] + "-" + str(lecture + 1) + ".mp4")
+	os.rename(downloadName, keys[courseInput] + "-" + str(lecture + 1) + ".mp4")
 
 	#print("download finished and renamed to " + keys[courseInput] + "-" + str(lecture + 1))
 
