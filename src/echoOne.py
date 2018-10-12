@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+import getpass
 import os.path
 
 def enable_download_in_headless_chrome(driver, download_dir):
@@ -38,10 +39,10 @@ time.sleep(2)
 # login to microsoft
 elem = driver.find_element_by_id("userNameInput")
 elem.clear()
-elem.send_keys("z5208133@ad.unsw.edu.au")
+elem.send_keys(input("UNSW zID: ") + "@ad.unsw.edu.au")
 elem = driver.find_element_by_name("Password")
 elem.clear()
-elem.send_keys("Enter Password Here")
+elem.send_keys(getpass.getpass())
 elem.send_keys(Keys.RETURN)
 
 time.sleep(2)
