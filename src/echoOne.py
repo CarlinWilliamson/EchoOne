@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 import time
 import re
 import getpass
@@ -36,11 +36,11 @@ def main():
 	# login to microsoft
 	elem = driver.find_element_by_id("userNameInput")
 	elem.clear()
-  elem.send_keys(input("UNSW zID: ") + "@ad.unsw.edu.au")
-  elem = driver.find_element_by_name("Password")
-  elem.clear()
-  elem.send_keys(getpass.getpass())
-  elem.send_keys(Keys.RETURN)
+	elem.send_keys(input("UNSW zID: ") + "@ad.unsw.edu.au")
+	elem = driver.find_element_by_name("Password")
+	elem.clear()
+	elem.send_keys(getpass.getpass())
+	elem.send_keys(Keys.RETURN)
 
 
 	# choose course
