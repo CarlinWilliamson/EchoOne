@@ -9,6 +9,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 import os.path
 
+MAX_WAIT_TIME = 10
+
 def enable_download_in_headless_chrome(driver, download_dir):
     # add missing support for chrome "send_command"  to selenium webdriver
     driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
@@ -25,15 +27,13 @@ driver = webdriver.Chrome(options=options)
 #driver = webdriver.Chrome()
 driver.get("http://www.echo360.org.au")
 #assert "Python" in driver.title
-
+driver.implicitly_wait(MAX_WAIT_TIME) # seconds
 
 # login to echo360
 elem = driver.find_element_by_name("email")
 elem.clear()
 elem.send_keys("carlin.williamson@student.unsw.edu.au")
 elem.send_keys(Keys.RETURN)
-
-time.sleep(2)
 
 # login to microsoft
 elem = driver.find_element_by_id("userNameInput")
@@ -44,7 +44,6 @@ elem.clear()
 elem.send_keys("Enter Password Here")
 elem.send_keys(Keys.RETURN)
 
-time.sleep(2)
 
 # choose course
 page_source = driver.page_source
@@ -73,7 +72,7 @@ print(matchDict[keys[courseInput]])
 elm = driver.find_element_by_id(matchDict[keys[courseInput]])
 elm.click()
 
-time.sleep(2)
+
 
 # choose lecture video
 elms = driver.find_elements_by_class_name("menu-opener")
@@ -88,12 +87,12 @@ lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 for lecture in range(lectureInputStart, lectureInputEnd):
 	elms = driver.find_elements_by_class_name("courseMediaIndicator")
 	elms[lecture].click()
-	time.sleep(0.5)
+	
 
 	# open download page
 	elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(lecture + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
 	elm.click()
-	time.sleep(0.5)
+	
 
 	# make the video hd
 	#elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
@@ -107,7 +106,6 @@ for lecture in range(lectureInputStart, lectureInputEnd):
 	os.chdir("C:\\Users\\marcu\\Downloads")
 	#print("Downloading Lecture " + str(lecture+1))
 	while not os.path.exists("sd1.mp4"):
-		
 		time.sleep(1)
 	os.rename("sd1.mp4", keys[courseInput] + "-" + str(lecture + 1) + ".mp4")
 
