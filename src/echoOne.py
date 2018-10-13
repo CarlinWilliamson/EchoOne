@@ -85,6 +85,9 @@ lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 downloadHD = input("\nDownload High Definition video? (y/n): ")
 downloadFolder = keys[courseInput]
 downloadName = "sd1.mp4"
+
+if not os.path.exists(downloadFolder):
+    os.mkdir(downloadFolder)
 os.chdir(downloadFolder)
 
 if (downloadHD == "y"):
