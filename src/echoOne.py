@@ -85,6 +85,8 @@ lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 downloadHD = input("\nDownload High Definition video? (y/n): ")
 downloadFolder = keys[courseInput]
 downloadName = "sd1.mp4"
+os.chdir(downloadFolder)
+
 if (downloadHD == "y"):
 	downloadName = "hd1.mp4"
 
@@ -109,7 +111,6 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	elm = driver.find_element_by_class_name("downloadBtn")
 	elm.click()
 
-	os.chdir(downloadFolder)
 	#print("Downloading Lecture " + str(lecture+1))
 	while not os.path.exists(downloadName):
 		time.sleep(1)
