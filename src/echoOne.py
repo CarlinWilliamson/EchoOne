@@ -1,14 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-import time
-import re
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 import getpass
 import os.path
+import time
+import re
+
 
 def enable_download_in_headless_chrome(driver, download_dir):
     # add missing support for chrome "send_command"  to selenium webdriver
@@ -18,7 +19,7 @@ def enable_download_in_headless_chrome(driver, download_dir):
     command_result = driver.execute("send_command", params)
 
 options = Options() 
-options.add_argument("--headless")
+#options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
 #driver = webdriver.Firefox(firefox_options = options)
 driver.get("http://www.echo360.org.au")
@@ -43,29 +44,15 @@ elem.send_keys(Keys.RETURN)
 time.sleep(2)
 
 # choose course
-page_source = driver.page_source
-page = page_source.split('\n')
-
-matches = []
-for line in page:
-	matchObj = re.match( r'.*id="(\S*)".*See all classes in (\w*)', line)
-	if matchObj:
-		matches.append(matchObj)
-
-matchDict = {};
-for match in matches:
-	matchDict[match.group(2)] = match.group(1);
-
+elms = driver.find_elements_by_class_name("kVmCLd")
 print("Your Courses:")
-counter = 0
-keys = list(matchDict.keys());
-for key in keys:
-	print(key + ": " + str(counter));
-	counter += 1
+for i, elm in enumerate(elms):
+	print(str(i) + ": " + elm.text.split(" - ")[1])
+
 courseInput = int(input("\nSelect a Courses Corresponding Number: "))
 
-matchid = courseInput
-elm = driver.find_element_by_id(matchDict[keys[courseInput]])
+elm = elms[courseInput]
+courseName = elm.text.split(" - ")[1]
 elm.click()
 
 time.sleep(2)
@@ -83,7 +70,7 @@ lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 
 downloadHD = input("\nDownload High Definition video? (y/n): ")
-downloadFolder = keys[courseInput]
+downloadFolder = courseName
 downloadName = "sd1.mp4"
 
 if not os.path.exists(downloadFolder):
@@ -99,13 +86,13 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	time.sleep(0.5)
 
 	# open download page
-	elm = driver.find_element_by_xpath("/html/body/div[2]/div[3]/div/div/div/div[2]/div[" + str(lecture + 1) + "]/div/div/div/div/div/div[2]/ul/li[2]/a")
+	elm = driver.find_element_by_partial_link_text("Download original")
 	elm.click()
 	time.sleep(0.75)
 
 	# make the video hd
 	if (downloadHD == "y"):
-		elm = driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/div[1]/div[4]/div[1]/div/div/select/option[2]")
+		elm = driver.find_elements_by_tag_name("option")[1]
 		elm.click()
 		time.sleep(0.5)
 
@@ -117,7 +104,7 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	#print("Downloading Lecture " + str(lecture+1))
 	while not os.path.exists(downloadName):
 		time.sleep(1)
-	os.rename(downloadName, keys[courseInput] + "-" + str(lecture + 1) + ".mp4")
+	os.rename(downloadName, courseName + "-" + str(lecture + 1) + ".mp4")
 
 	#print("download finished and renamed to " + keys[courseInput] + "-" + str(lecture + 1))
 
