@@ -13,6 +13,14 @@ Eventually it will log on (usually within 5 miniutes) but make sure you enter th
 
 https://login.echo360.org.au/login/pingone/error?errorcode=SAML_003[61c24290]&message=We+received+an+unsuccessful+response+from+your+IdP.+Contact+your+administrator+or+an+IdP+administrator+for+more+information.%0AResponse+status%3A+urn%3Aoasis%3Anames%3Atc%3ASAML%3A2.0%3Astatus%3AResponder)
 
+## Required packages/installation
+You need selenium
+```
+pip install selenium
+or
+pip install -r requirements.txt
+```
+and you need a chrome driver https://selenium-python.readthedocs.io/installation.html#drivers
 
 ## Guide
 You will be prompted for the following information in order:
