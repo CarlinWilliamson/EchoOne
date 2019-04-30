@@ -60,7 +60,7 @@ while True:
 	time.sleep(2)
 
 	# We should be at the echo360
-	elms = driver.find_elements_by_class_name("kVmCLd")
+	elms = driver.find_elements_by_class_name("hlBdZn")
 	if elms: break
 
 	count += 1
@@ -73,13 +73,21 @@ print("\nLogged in after {} tries in {} seconds\n".format(count, round(time.time
 password = None
 
 print("Your Courses:")
+print("    Course   Term LectureStream")
 for i, elm in enumerate(elms):
-	print(str(i) + ": " + elm.text.split(" - ")[1])
+	text = elm.get_attribute("aria-label")
+	courseName = text.split(" - ")[1].split("/")[0]
+	reg = re.match(r'\d{2}(\d{2})TP(\d)', text.split(" - ")[2])
+	term = "{}T{}".format(reg.group(1), reg.group(2))
+	reg = re.match(r'.*(\d)', text.split(" - ")[2])
+	stream = reg.group(1)
+	#print(text)
+	print("{:2d}: {} {} {}".format(i, courseName, term, stream))
 
 courseInput = int(input("\nSelect a Courses Corresponding Number: "))
 
 elm = elms[courseInput]
-courseName = elm.text.split(" - ")[1].split(" ")[0]
+courseName = elm.get_attribute("aria-label").split(" - ")[1].split("/")[0]
 elm.click()
 
 time.sleep(2)
@@ -114,6 +122,8 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	time.sleep(0.5)
 
 	# open download page
+	# The next line can fail if the lecture video isn't avaliable yet
+	# i.e. the lecture is either recording or hasn't been uploaded yet
 	elm = driver.find_element_by_partial_link_text("Download original")
 	elm.click()
 	time.sleep(1)
@@ -137,6 +147,6 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	print("Download finished and renamed to {}_{:02d}.mp4".format(courseName, lecture))
 
 #assert "No results found." not in driver.page_source
-#driver.close()
+driver.close()
 
 # vim: set softtabstop=8
