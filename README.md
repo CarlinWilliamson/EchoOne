@@ -6,13 +6,6 @@ Python script which navigates Echo360 allowing you to download multiple lectures
 ## The issues with Echo360
 When you try to download lectures off Echo360 it names them as either hd1.mp4 or sd1.mp4 no matter what course or lecture it is. This is especially annoying when you want to download more than one lecture as you must keep track of the order you started the downloads in, wait then rename them yourself.
 
-## Current limitations
-Unfortunately this year UNSW's Single Sign On does not work most of the time (it gives the error page linked below)
-For now we've implemented a work around where the script tries to log on approximatly every minute until it works.
-Eventually it will log on (usually within 5 miniutes) but make sure you enter the correct zid and password
-
-https://login.echo360.org.au/login/pingone/error?errorcode=SAML_003[61c24290]&message=We+received+an+unsuccessful+response+from+your+IdP.+Contact+your+administrator+or+an+IdP+administrator+for+more+information.%0AResponse+status%3A+urn%3Aoasis%3Anames%3Atc%3ASAML%3A2.0%3Astatus%3AResponder)
-
 ## Required packages/installation
 You need selenium
 ```
