@@ -111,7 +111,7 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 		time.sleep(0.5)
 
 	#download the video
-	enable_download_in_headless_chrome(driver, downloadFolder)
+	enable_download_in_headless_chrome(driver, os.getcwd())
 	elm = driver.find_element_by_class_name("downloadBtn")
 	elm.click()
 
