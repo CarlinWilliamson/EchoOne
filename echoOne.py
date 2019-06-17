@@ -18,49 +18,59 @@ def enable_download_in_headless_chrome(driver, download_dir):
     params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
     command_result = driver.execute("send_command", params)
 
+driver = None
+elms = None
+
+login = input("UNSW zID: ") + "@ad.unsw.edu.au"
+password = getpass.getpass()
+
+count = 1
 start = time.time()
 
 options = Options() 
 options.add_argument("--headless")
 
+print("The UNSW single sign on system is usualy broken")
+print("This could take a few minutes", end='', flush=True)
 
-driver = webdriver.Chrome(options=options)
-#driver = webdriver.Firefox(firefox_options = options)
+while True:
+	driver = webdriver.Chrome(options=options)
+	#driver = webdriver.Firefox(firefox_options = options)
+	driver.get("http://www.echo360.org.au")
 
-driver.get("https://ssologin.unsw.edu.au/cas/login?service=https://moodle.telt.unsw.edu.au/login/index.php?authCAS=CAS")
+	# login to echo360
+	elem = driver.find_element_by_name("email")
+	elem.clear()
+	elem.send_keys("carlin.williamson@student.unsw.edu.au")
+	elem.send_keys(Keys.RETURN)
 
-elem = driver.find_element_by_name("username")
-elem.clear()
-elem.send_keys(input("UNSW zID: "))
-elem = driver.find_element_by_name("password")
-elem.clear()
-elem.send_keys(getpass.getpass())
-elem.send_keys(Keys.RETURN)
+	time.sleep(2)
 
-# look for a link with a year in it (pretty much any will do...)
-elm = None
-year = 2019
-while not elm:
-	try:
-		elm = driver.find_element_by_partial_link_text(str(year))
-	except:
-		pass
+	# login to microsoft
+	elem = driver.find_element_by_id("userNameInput")
+	elem.clear()
+	elem.send_keys(login)
+	elem = driver.find_element_by_name("Password")
+	elem.clear()
+	elem.send_keys(password)
 
-	year = year + 1
+	time.sleep(1)
+	elem.send_keys(Keys.RETURN)
 
-elm.click()
+	time.sleep(2)
 
+	# We should be at the echo360
+	elms = driver.find_elements_by_class_name("hlBdZn")
+	if elms: break
 
-elm = driver.find_element_by_partial_link_text("record")
-elm.click()
+	count += 1
+	print(".", end='', flush=True)
+	driver.close()
+	time.sleep(50) # Very unscientific but it seems like a longer wait here works better
 
-time.sleep(2)
-driver.get("https://echo360.org.au/home")
-time.sleep(1)
+print("\nLogged in after {} tries in {} seconds\n".format(count, round(time.time() - start, 0)))
 
-
-# We should be at the echo360
-elms = driver.find_elements_by_class_name("hlBdZn")
+password = None
 
 print("Your Courses:")
 print("    Course   Term LectureStream")
@@ -120,9 +130,8 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 
 	# make the video hd
 	if (downloadHD == "y"):
-		time.sleep(0.75)
-		elms = driver.find_elements_by_tag_name("option")
-		elms[1].click()
+		elm = driver.find_elements_by_tag_name("option")[1]
+		elm.click()
 		time.sleep(0.75)
 
 	#download the video
