@@ -19,7 +19,7 @@ def enable_download_in_headless_chrome(driver, download_dir):
     command_result = driver.execute("send_command", params)
 
 options = Options() 
-#options.add_argument("--headless")
+options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
 #driver = webdriver.Firefox(firefox_options = options)
 driver.get("http://www.echo360.org.au")
@@ -27,7 +27,10 @@ driver.get("http://www.echo360.org.au")
 # login to echo360
 elem = driver.find_element_by_name("email")
 elem.clear()
-elem.send_keys("carlin.williamson@student.unsw.edu.au")
+
+# It doesn't matter whos email it is
+# Might fail if carlin williamson graduates
+elem.send_keys("carlin.williamson@unsw.edu.au")
 elem.send_keys(Keys.RETURN)
 
 time.sleep(2)
@@ -71,8 +74,9 @@ print("Your Lectures:")
 counter = 0
 for elm in elms:
 	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
-	print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
-	counter += 1
+	if matchObj:
+		print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
+		counter += 1
 
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
@@ -98,7 +102,7 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	# i.e. the lecture is either recording or hasn't been uploaded yet
 	elm = driver.find_element_by_partial_link_text("Download original")
 	elm.click()
-	time.sleep(0.75)
+	time.sleep(1)
 
 	# make the video hd
 	if (downloadHD == "y"):
