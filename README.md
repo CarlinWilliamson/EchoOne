@@ -1,5 +1,5 @@
 # EchoOne
-Started as part of the CSE Hackathon 2018
+Started as part of the CSE Hackathon 2018 by Marcus Majchrzak, Adam Parslow and Carlin Williamson
 
 Python script which navigates Echo360 allowing you to download multiple lectures and then renames them to CourseCode\_00.mp4
 
@@ -29,7 +29,7 @@ User inputs are in double quotes
 
 
 ```
-UNSW zID: "z5122521"
+UNSW zID: "z1234567"
 Password: "YOUR PASSWORD"
 The UNSW single sign on system is sometimes broken....
 Logged in after 5 tries in 444.0 seconds
