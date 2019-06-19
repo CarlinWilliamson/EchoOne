@@ -47,7 +47,7 @@ elem.send_keys(Keys.RETURN)
 time.sleep(2)
 
 # choose course
-elms = driver.find_elements_by_class_name("hlBdZn")
+elms = driver.find_elements_by_class_name("ibaECj")
 print("Your Courses:")
 print("    Course   Term LectureStream")
 for i, elm in enumerate(elms):
