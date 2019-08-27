@@ -14,8 +14,18 @@ import re
 def enable_download_in_headless_chrome(driver, download_dir):
 	# add missing support for chrome "send_command"  to selenium webdriver
 	driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+
 	params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
 	command_result = driver.execute("send_command", params)
+
+def get_download_progress():
+	# JavaScript magic to get us through shadowroots
+	download = driver.execute_script('''
+			var tag = document.querySelector('downloads-manager').shadowRoot;
+			return tag.querySelector('downloads-item').shadowRoot;
+			''')
+	elm = download.find_element_by_id("description")	
+	return elm.text
 
 options = Options() 
 #options.add_argument("--headless")
@@ -119,9 +129,13 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	elm.click()
 
 	#print("Downloading Lecture " + str(lecture+1))
+	driver.get('chrome://downloads/')
+	time.sleep(3)
 	while not os.path.exists(downloadName):
+		print(get_download_progress())
 		time.sleep(1)
 	os.rename(downloadName, "{}_{:02d}.mp4".format(courseName, lecture))
+	driver.back()
 	print("Download finished and renamed to {}_{:02d}.mp4".format(courseName, lecture))
 
 driver.close()
