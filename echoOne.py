@@ -9,6 +9,7 @@ import getpass
 import os.path
 import time
 import re
+import sys
 
 
 def enable_download_in_headless_chrome(driver, download_dir):
@@ -18,17 +19,35 @@ def enable_download_in_headless_chrome(driver, download_dir):
 	params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
 	command_result = driver.execute("send_command", params)
 
-def get_download_progress():
+def print_download_progress(filename):
 	# JavaScript magic to get us through shadowroots
 	download = driver.execute_script('''
 			var tag = document.querySelector('downloads-manager').shadowRoot;
 			return tag.querySelector('downloads-item').shadowRoot;
 			''')
-	elm = download.find_element_by_id("description")	
-	return elm.text
+	elm = download.find_element_by_id("description")
+	reg = re.match(r'(.*) - (.*) of (.*), (.*) left', elm.text)
+	length = 20
+	suffix = "                "
+	curr = 1
+	total = 1
+	if (reg):
+		suffix = reg.group(4) + " at " + reg.group(1)
+		curr = float(reg.group(2).split(" ")[0].replace(",",""))
+		total = float(reg.group(3).split(" ")[0].replace(",",""))
+
+	filledLength = int(length * curr // total)
+	bar = '=' * filledLength
+	if (filledLength != length):
+		bar = bar + '>' + ' ' * (length - filledLength - 1)
+	print('\r%s |%s| %4.1f%% %s     ' % (filename, bar, 100*curr/total, suffix), end = '\r')
+	sys.stdout.flush()
+	
+	
 
 options = Options() 
 #options.add_argument("--headless")
+options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(options=options)
 #driver = webdriver.Firefox(firefox_options = options)
 driver.get("http://www.echo360.org.au")
@@ -98,6 +117,8 @@ downloadHD = input("\nDownload High Definition video? (y/n): ")
 downloadFolder = courseName
 downloadName = "sd1.mp4"
 
+print("\n")
+
 if not os.path.exists(downloadFolder):
 	os.mkdir(downloadFolder)
 os.chdir(downloadFolder)
@@ -131,12 +152,16 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	#print("Downloading Lecture " + str(lecture+1))
 	driver.get('chrome://downloads/')
 	time.sleep(3)
+	filename = "{}_{:02d}.mp4".format(courseName, lecture)
 	while not os.path.exists(downloadName):
-		print(get_download_progress())
-		time.sleep(1)
-	os.rename(downloadName, "{}_{:02d}.mp4".format(courseName, lecture))
+		print_download_progress(filename)
+		time.sleep(0.25)
+	time.sleep(0.25)
+	print_download_progress(filename) # make sure we print the 100% message
+	sys.stdout.write('\n')
+
+	os.rename(downloadName, filename)
 	driver.back()
-	print("Download finished and renamed to {}_{:02d}.mp4".format(courseName, lecture))
 
 driver.close()
 
