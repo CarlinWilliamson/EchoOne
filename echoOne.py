@@ -135,7 +135,6 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	url = elm.get_attribute("href")
 	# replacing after the last '='
 	url = re.sub(r'^(.*=).*\.mp4$', r'\1' + filename, url)
-	print(url)
 	driver.get(url) # download the video
 
 	# exit the modal
