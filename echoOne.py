@@ -12,11 +12,11 @@ import re
 
 
 def enable_download_in_headless_chrome(driver, download_dir):
-    # add missing support for chrome "send_command"  to selenium webdriver
-    driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+	# add missing support for chrome "send_command"  to selenium webdriver
+	driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
 
-    params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
-    command_result = driver.execute("send_command", params)
+	params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+	command_result = driver.execute("send_command", params)
 
 options = Options() 
 options.add_argument("--headless")
@@ -47,11 +47,15 @@ elem.send_keys(Keys.RETURN)
 time.sleep(2)
 
 # choose course
-elms = driver.find_elements_by_class_name("ibaECj")
+elms = driver.find_elements_by_tag_name("a")
+elms = list(filter(lambda x:x.get_attribute("aria-label"), elms))
+elms = list(filter(lambda x:len(x.get_attribute("aria-label")) > 10, elms))
 print("Your Courses:")
 print("    Course   Term LectureStream")
 for i, elm in enumerate(elms):
 	text = elm.get_attribute("aria-label")
+	if (text is None or len(text) < 10):
+		continue
 	courseName = text.split(" - ")[1].split("/")[0]
 	reg = re.match(r'\d{2}(\d{2})TP(\d)', text.split(" - ")[2])
 	term = "{}T{}".format(reg.group(1), reg.group(2))
@@ -86,7 +90,7 @@ downloadFolder = courseName
 downloadName = "sd1.mp4"
 
 if not os.path.exists(downloadFolder):
-    os.mkdir(downloadFolder)
+	os.mkdir(downloadFolder)
 os.chdir(downloadFolder)
 
 if (downloadHD == "y"):
