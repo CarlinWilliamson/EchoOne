@@ -22,7 +22,6 @@ def enable_download_in_headless_chrome(driver, download_dir):
 options = Options() 
 options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
-#driver = webdriver.Firefox(firefox_options = options)
 driver.get("http://www.echo360.org.au")
 
 # login to echo360
@@ -30,7 +29,7 @@ elem = driver.find_element_by_name("email")
 elem.clear()
 
 # It doesn't matter whos email it is
-# Might fail if carlin williamson graduates
+# Might fail if/when carlin williamson graduates
 elem.send_keys("carlin.williamson@unsw.edu.au")
 elem.send_keys(Keys.RETURN)
 
@@ -73,27 +72,34 @@ elm.click()
 
 time.sleep(2)
 
+# make sure the folder exists
+downloadFolder = courseName
+if not os.path.exists(downloadFolder):
+	os.mkdir(downloadFolder)
+os.chdir(downloadFolder)
+
 # choose lecture video
-elms = driver.find_elements_by_class_name("menu-opener")
+lectureButtons = driver.find_elements_by_class_name("menu-opener")
+alreadyDownloaded = glob.glob("*.mp4")
 print("\nYour Lectures:")
-counter = 0
-for elm in elms:
-	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
+for i, elm in enumerate(lectureButtons):
+	text = elm.get_attribute("aria-controls")
+	matchObj = re.match(r'.*_(\d{4})-(\d{2})-(\d{2})T.*', text)
 	if matchObj:
-		date = matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1)
-		print("{:2d}: {}".format(counter, date))
-		counter += 1
+		date = "{}/{}/{}".format(matchObj.group(3), matchObj.group(2), matchObj.group(1))
+
+		# check if the file has already been downloaded
+		filename = "{}_{:02d}.mp4".format(courseName, i)
+		if filename in alreadyDownloaded:
+			print("\033[92m {:2d}: {}\033[00m".format(i, date)) # green
+		else:
+			print("\033[91m {:2d}: {}\033[00m".format(i, date)) # red
+
 
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 
 downloadHD = input("\nDownload High Definition video? (y/n): ")
-downloadFolder = courseName
-
-# make sure the folder exists
-if not os.path.exists(downloadFolder):
-	os.mkdir(downloadFolder)
-os.chdir(downloadFolder)
 
 # make sure there are no .crdownload files in the folder
 # these are created when chrome is closed ungracefully
@@ -107,8 +113,7 @@ enable_download_in_headless_chrome(driver, os.getcwd())
 
 for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	# open lecture popup menu
-	elms = driver.find_elements_by_class_name("courseMediaIndicator")
-	elms[lecture].click()
+	lectureButtons[lecture].click()
 	time.sleep(0.5)
 
 	# open download modal
@@ -129,7 +134,8 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	filename = "{}_{:02d}.mp4".format(courseName, lecture)
 	url = elm.get_attribute("href")
 	# replacing after the last '='
-	url = "=".join(url.split("=")[:-1]) + "=" + filename
+	url = re.sub(r'^(.*=).*\.mp4$', r'\1' + filename, url)
+	print(url)
 	driver.get(url) # download the video
 
 	# exit the modal
