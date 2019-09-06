@@ -27,31 +27,31 @@ You will be prompted for the following information in order:
 ### Example terminal input/output
 User inputs are in double quotes
 
-
 ```
 UNSW zID: "z1234567"
 Password: "YOUR PASSWORD"
-The UNSW single sign on system is sometimes broken....
-Logged in after 5 tries in 444.0 seconds
+
 Your Courses:
-0: COMP3331 Computer Networks&Applications +
-1: SENG2021 Reqts & Design Workshop
-2: COMP2111 System Modelling and Design
+    Course   Term LectureStream
+ 0: MATH2099 19T2 1
+ 1: COMP3821 19T2 1
+ 2: MATH2400 19T2 2
 
 Select a Courses Corresponding Number: "2"
+
 Your Lectures:
-18/02/2019: 0
-20/02/2019: 1
-25/02/2019: 2
-27/02/2019: 3
-04/03/2019: 4
+  0: 03/06/2019
+  1: 05/06/2019
+  2: 12/06/2019
+  3: 17/06/2019
 
 Select First Lecture To Download: "1"
 
 Select Last Lecture To Download: "3"
 
 Download High Definition video? (y/n): "y"
-Download finished and renamed to COMP2111_01.mp4
-Download finished and renamed to COMP2111_02.mp4
-Download finished and renamed to COMP2111_03.mp4
+
+Finished Downloading MATH2400_01.mp4
+Finished Downloading MATH2400_02.mp4
+Finished Downloading MATH2400_03.mp4
 ```
