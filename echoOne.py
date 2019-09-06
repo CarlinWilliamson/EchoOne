@@ -9,6 +9,7 @@ import getpass
 import os.path
 import time
 import re
+import glob
 
 
 def enable_download_in_headless_chrome(driver, download_dir):
@@ -50,7 +51,7 @@ time.sleep(2)
 elms = driver.find_elements_by_tag_name("a")
 elms = list(filter(lambda x:x.get_attribute("aria-label"), elms))
 elms = list(filter(lambda x:len(x.get_attribute("aria-label")) > 10, elms))
-print("Your Courses:")
+print("\nYour Courses:")
 print("    Course   Term LectureStream")
 for i, elm in enumerate(elms):
 	text = elm.get_attribute("aria-label")
@@ -74,12 +75,13 @@ time.sleep(2)
 
 # choose lecture video
 elms = driver.find_elements_by_class_name("menu-opener")
-print("Your Lectures:")
+print("\nYour Lectures:")
 counter = 0
 for elm in elms:
 	matchObj = re.match( r'.*_(\d{4})-(\d{2})-(\d{2})T.*', elm.get_attribute("aria-controls"))
 	if matchObj:
-		print(matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1) + ": " + str(counter))
+		date = matchObj.group(3) + "/" + matchObj.group(2) + "/" + matchObj.group(1)
+		print("{:2d}: {}".format(counter, date))
 		counter += 1
 
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
@@ -87,21 +89,29 @@ lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 
 downloadHD = input("\nDownload High Definition video? (y/n): ")
 downloadFolder = courseName
-downloadName = "sd1.mp4"
 
+# make sure the folder exists
 if not os.path.exists(downloadFolder):
 	os.mkdir(downloadFolder)
 os.chdir(downloadFolder)
 
-if (downloadHD == "y"):
-	downloadName = "hd1.mp4"
+# make sure there are no .crdownload files in the folder
+# these are created when chrome is closed ungracefully
+# the script relies on the crdownload file disappearing to tell
+# when the download is finished
+if len(glob.glob("*.crdownload")) != 0:
+	input("\n{} contains .crdownload files. "
+		  "delete these files then press enter".format(courseName))
+
+enable_download_in_headless_chrome(driver, os.getcwd())
 
 for lecture in range(lectureInputStart, lectureInputEnd + 1):
+	# open lecture popup menu
 	elms = driver.find_elements_by_class_name("courseMediaIndicator")
 	elms[lecture].click()
 	time.sleep(0.5)
 
-	# open download page
+	# open download modal
 	# The next line can fail if the lecture video isn't avaliable yet
 	# i.e. the lecture is either recording or hasn't been uploaded yet
 	elm = driver.find_element_by_partial_link_text("Download original")
@@ -114,19 +124,26 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 		elm.click()
 		time.sleep(0.5)
 
-	#download the video
-	enable_download_in_headless_chrome(driver, os.getcwd())
+	# get their download link and swap out the name for ours
 	elm = driver.find_element_by_class_name("downloadBtn")
+	filename = "{}_{:02d}.mp4".format(courseName, lecture)
+	url = elm.get_attribute("href")
+	# replacing after the last '='
+	url = "=".join(url.split("=")[:-1]) + "=" + filename
+	driver.get(url) # download the video
+
+	# exit the modal
+	elm = driver.find_element_by_class_name("left")
+	elm = elm.find_element_by_tag_name("a")
 	elm.click()
+	time.sleep(0.5)
 
-	#print("Downloading Lecture " + str(lecture+1))
-	while not os.path.exists(downloadName):
-		time.sleep(1)
-	os.rename(downloadName, "{}_{:02d}.mp4".format(courseName, lecture))
+	# wait for the crdownload file to disappear
+	while len(glob.glob("*.crdownload")) != 0:
+		time.sleep(0.5)
 
-	print("Download finished and renamed to {}_{:02d}.mp4".format(courseName, lecture))
+	print("Finished Downloading %s" % filename)
 
-#assert "No results found." not in driver.page_source
 driver.close()
 
 # vim: set softtabstop=8
