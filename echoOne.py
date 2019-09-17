@@ -57,7 +57,7 @@ for i, elm in enumerate(elms):
 	if (text is None or len(text) < 10):
 		continue
 	courseName = text.split(" - ")[1].split("/")[0]
-	reg = re.match(r'\d{2}(\d{2})TP(\d)', text.split(" - ")[2])
+	reg = re.match(r'\d{2}(\d{2}).*(\d) ', text.split(" - ")[2])
 	term = "{}T{}".format(reg.group(1), reg.group(2))
 	reg = re.match(r'.*(\d)', text.split(" - ")[2])
 	stream = reg.group(1)
