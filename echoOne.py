@@ -95,7 +95,6 @@ for i, elm in enumerate(lectureButtons):
 		else:
 			print("\033[91m {:2d}: {}\033[00m".format(i, date)) # red
 
-
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
 
@@ -113,7 +112,7 @@ enable_download_in_headless_chrome(driver, os.getcwd())
 
 for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	# open lecture popup menu
-	lectureButtons[lecture].click()
+	lectureButtons[lecture].find_element_by_tag_name("div").click()
 	time.sleep(0.5)
 
 	# open download modal
