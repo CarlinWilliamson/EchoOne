@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import getpass
 import os.path
 import time
@@ -118,8 +118,13 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	# open download modal
 	# The next line can fail if the lecture video isn't avaliable yet
 	# i.e. the lecture is either recording or hasn't been uploaded yet
-	elm = driver.find_element_by_partial_link_text("Download original")
-	elm.click()
+	try:
+		elm = driver.find_element_by_partial_link_text("Download original")
+		elm.click()
+	except NoSuchElementException:
+		print("\n%s is viewable but not currently downloadable. Try again later" % filename)
+		quit()
+        
 	time.sleep(1)
 
 	# make the video hd
