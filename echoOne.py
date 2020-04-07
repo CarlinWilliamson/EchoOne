@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
@@ -33,7 +34,7 @@ elem.clear()
 elem.send_keys("carlin.williamson@unsw.edu.au")
 elem.send_keys(Keys.RETURN)
 
-time.sleep(2)
+#time.sleep(2)
 
 # login to microsoft
 elem = driver.find_element_by_id("userNameInput")
@@ -44,14 +45,14 @@ elem.clear()
 elem.send_keys(getpass.getpass())
 elem.send_keys(Keys.RETURN)
 
-time.sleep(2)
+#time.sleep(2)
 
 # choose course
 elms = driver.find_elements_by_tag_name("a")
 elms = list(filter(lambda x:x.get_attribute("aria-label"), elms))
 elms = list(filter(lambda x:len(x.get_attribute("aria-label")) > 10, elms))
 print("\nYour Courses:")
-print("    Course   Term LectureStream")
+print("	Course   Term LectureStream")
 for i, elm in enumerate(elms):
 	text = elm.get_attribute("aria-label")
 	if (text is None or len(text) < 10):
@@ -78,22 +79,36 @@ if not os.path.exists(downloadFolder):
 	os.mkdir(downloadFolder)
 os.chdir(downloadFolder)
 
+# open all the group menus
+groupButtons = driver.find_elements_by_class_name("opener")
+for b in groupButtons:
+	b.click()
+
 # choose lecture video
 lectureButtons = driver.find_elements_by_class_name("menu-opener")
 alreadyDownloaded = glob.glob("*.mp4")
 print("\nYour Lectures:")
 for i, elm in enumerate(lectureButtons):
+	label = ""
+
+	# find the date if it's avaliable
 	text = elm.get_attribute("aria-controls")
 	matchObj = re.match(r'.*_(\d{4})-(\d{2})-(\d{2})T.*', text)
 	if matchObj:
-		date = "{}/{}/{}".format(matchObj.group(3), matchObj.group(2), matchObj.group(1))
+		label = "{}/{}/{} - ".format(matchObj.group(3), matchObj.group(2), matchObj.group(1))
 
-		# check if the file has already been downloaded
-		filename = "{}_{:02d}.mp4".format(courseName, i)
-		if filename in alreadyDownloaded:
-			print("\033[92m {:2d}: {}\033[00m".format(i, date)) # green
-		else:
-			print("\033[91m {:2d}: {}\033[00m".format(i, date)) # red
+	# find the name of the video of it's avaliable
+	text = elm.get_attribute("aria-label")
+	matchObj = re.match(r'.*for (.*)', text)
+	if matchObj:
+		label = label + matchObj.group(1)
+
+	# check if the file has already been downloaded
+	filename = "{}_{:02d}.mp4".format(courseName, i)
+	if filename in alreadyDownloaded:
+		print("\033[92m {:2d}: {}\033[00m".format(i, label)) # green
+	else:
+		print("\033[91m {:2d}: {}\033[00m".format(i, label)) # red
 
 lectureInputStart = int(input("\nSelect First Lecture To Download: "))
 lectureInputEnd = int(input("\nSelect Last Lecture To Download: "))
@@ -124,7 +139,7 @@ for lecture in range(lectureInputStart, lectureInputEnd + 1):
 	except NoSuchElementException:
 		print("\n%s is viewable but not currently downloadable. Try again later" % filename)
 		quit()
-        
+		
 	time.sleep(1)
 
 	# make the video hd
